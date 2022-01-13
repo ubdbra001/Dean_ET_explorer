@@ -55,8 +55,8 @@ categorise_look <- function(data, AOI_info = NULL){
     AOI_X <- AOI_info[[AOI_name]]$X
     AOI_Y <- AOI_info[[AOI_name]]$Y
     
-    in_x <- between(gaze_x, AOI_X[1], AOI_X[2])
-    in_y <- between(gaze_y, AOI_Y[1], AOI_Y[2])
+    in_x <- between(data$gaze_x, AOI_X[1], AOI_X[2])
+    in_y <- between(data$gaze_y, AOI_Y[1], AOI_Y[2])
     
     data <- mutate(data, "AOI_{AOI_name}" := in_x & in_y)
   }
