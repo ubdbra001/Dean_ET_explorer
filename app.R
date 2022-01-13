@@ -13,23 +13,46 @@ library(shiny)
 ui <- fluidPage(
 
     # Application title
-    titlePanel("Old Faithful Geyser Data"),
-
-    # Sidebar with a slider input for number of bins 
-    sidebarLayout(
-        sidebarPanel(
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30)
+    titlePanel("Bilingual ET data explorer"),
+    
+    tabsetPanel(type = "tabs",
+                tabPanel("AOI selections Plot",
+                         plotOutput('AOI_selection_plot')),
+                tabPanel("AOI looks Plot",
+                         checkboxInput("split_groups", "Split groups"),
+                         plotlyOutput('looking_proportion_plot')),
+                tabPanel("First look Plot",
+                         plotOutput('firstLook_plot'))),
+    
+    hr(),
+    
+    fluidRow(
+        column(5,
+               sliderInput("L_AOI_X", "Left AOI X vals",
+                           min = 0, max = 1,
+                           value = c(0,0.4), step = 0.01),
+               
+               sliderInput("L_AOI_Y", "Left AOI Y vals",
+                           min = 0, max = 1,
+                           value = c(0, 1), step = 0.01)
+               
         ),
-
-        # Show a plot of the generated distribution
-        mainPanel(
-           plotOutput("distPlot")
-        )
+        column(5,
+               sliderInput("R_AOI_X", "Right AOI X vals",
+                           min = 0, max = 1,
+                           value = c(0.6,1), step = 0.01),
+               sliderInput("R_AOI_Y", "Right AOI Y vals",
+                           min = 0, max = 1,
+                           value = c(0, 1), step = 0.01)
+        ),
+        column(2,
+               selectInput('trial_choice', "Trial Number",
+                           unique(ET_data$trial_ID)),
+               
+               numericInput('samples_for_look', "Number of samples in a look",
+                            value = 12, min = 1))
     )
+
 )
 
 # Define server logic required to draw a histogram
