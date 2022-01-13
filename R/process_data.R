@@ -32,3 +32,29 @@ average_gaze_pos <- function(data){
   
   return(data_out)
 }
+
+categorise_look <- function(data, AOI_info = NULL){
+  
+  
+  # If no AOI info is provided then load defaults
+  if(is.null(AOI_info)) {
+    AOI_info <- default_AOIs()
+  }
+  
+  AOI_names <- names(AOI_info)
+  
+  # For each AOI get the x & y values and gaze falls within them  
+  for (AOI_name in AOI_names){
+    
+    # May be able to functionalise this further? 
+    AOI_X <- AOI_info[[AOI_name]]$X
+    AOI_Y <- AOI_info[[AOI_name]]$Y
+    
+    in_x <- between(gaze_x, AOI_X[1], AOI_X[2])
+    in_y <- between(gaze_y, AOI_Y[1], AOI_Y[2])
+    
+    data <- mutate(data, "AOI_{AOI_name}" := in_x & in_y)
+  }
+  
+  return(data)
+}
