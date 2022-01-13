@@ -64,6 +64,18 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output) {
 
+    # Reactive function for processing the data
+    ET_categorised <- reactive({
+        
+        # Generate list of AOIs from the inputs
+        AOIs_list <- AOI_inputs_to_list(input$L_AOI_X, input$L_AOI_Y,
+                                        input$R_AOI_X, input$R_AOI_Y)
+        
+        # Categorise whether sample is in L or R AOI
+        data_out <- categorise_look(ET_processed, AOIs_list)
+        
+    })
+    
     # Render plot for AOI selection
     output[['AOI_selection_plot']] <- renderPlot({
         
