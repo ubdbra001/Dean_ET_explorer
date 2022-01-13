@@ -64,7 +64,30 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output) {
 
-
+    # Render plot for AOI selection
+    output[['AOI_selection_plot']] <- renderPlot({
+        
+        # Calculate the corner points for the AOIs selected
+        AOI_points <- calculate_AOIs(input$L_AOI_X,
+                                     input$L_AOI_Y,
+                                     input$R_AOI_X,
+                                     input$R_AOI_Y)
+        
+        # Plot the AOI polygons
+        ggplot(data = AOI_points, aes(x = x, y = y)) +
+            geom_polygon(data = stimuli_areas(), colour = "black", fill = NA) +
+            geom_polygon(aes(group = group, fill = group), alpha = 0.5) +
+            scale_x_continuous(limits = c(0,1), expand = c(0,0),
+                               breaks = seq(from = 0, to = 1, by = 0.2)) +
+            scale_y_continuous(limits = c(0,1), expand = c(0,0),
+                               breaks = seq(from = 0, to = 1, by = 0.2)) +
+            theme_bw() +
+            theme(legend.position = "none",
+                  axis.title.x = element_blank(),
+                  axis.title.y = element_blank())
+    })
+    
+    
 }
 
 # Run the application 
