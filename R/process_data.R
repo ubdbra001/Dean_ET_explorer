@@ -19,6 +19,15 @@ add_sample_n <- function(data){
   return(data_out)
 }
 
+add_group <- function(data, groupFile_loc = "data/Groups.csv") {
+  
+  # Load and add group info to data
+  
+  group_info <- readr::read_csv(groupFile_loc, show_col_types = F)
+  data <- left_join(data, group_info, by = "part_ID")
+
+}
+
 average_gaze_pos <- function(data){
   
   # Averages gaze position across both eyes
