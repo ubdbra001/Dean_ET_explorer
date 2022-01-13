@@ -8,3 +8,13 @@ load_data <- function(data_location = "data/processed_data/"){
   return(allData)
 }
 
+add_sample_n <- function(data){
+  # Adds sample_ID column that numbers each sample on a per participant and per
+  # trial basis
+  
+  grouped_data <- group_by(data, trial_ID, part_ID)
+  data_WsampleN <- mutate(grouped_data, sample_ID = row_number())
+  data_out <- ungroup(data_WsampleN)
+  
+  return(data_out)
+}
