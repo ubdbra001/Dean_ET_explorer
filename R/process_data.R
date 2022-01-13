@@ -58,3 +58,11 @@ categorise_look <- function(data, AOI_info = NULL){
   
   return(data)
 }
+
+default_AOIs <- function(){
+  # Generate nested list with default AOIs
+  AOIs <- list(L = list(X = c(0, 0.4),
+                        Y = c(0, 1)),
+               R = list(X = c(0.6, 1),
+                        Y = c(0, 1)))
+}
