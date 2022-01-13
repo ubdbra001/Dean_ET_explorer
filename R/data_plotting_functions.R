@@ -37,3 +37,15 @@ stimuli_areas <- function() {
   return(stims)
 }
 
+
+calculate_AOIs <- function(LX, LY, RX, RY) {
+
+  # Calculates AOIs from inputs and returns dataframe to draw  
+  L_points <- calculate_points(LX, LY, "left")
+  R_points <- calculate_points(RX, RY, "right")
+  
+  AOI_points <- bind_rows(L_points, R_points)
+  
+  return(AOI_points)
+}
+
