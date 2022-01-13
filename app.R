@@ -1,11 +1,11 @@
 #
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
+# This is a Shiny web application for exploring the ET data from the OSF repo:
+# https://osf.io/53gh2/
+
+# Helper functions for downloading the data and converting it from matthe mat
+# files are included, but not currently implemented in the app.
+
+# You can run the application by clicking the 'Run App' button above.
 
 library(shiny)
 
