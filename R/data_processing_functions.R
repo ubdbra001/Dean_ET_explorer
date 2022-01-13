@@ -117,3 +117,18 @@ find_first_look <- function(data, run_length) {
   
   return(first_look_loc)
 }
+
+
+AOI_inputs_to_list <- function(L_X, L_Y, R_X, R_Y){
+  
+  # Take the individual AOI input vectors and convert them to a nested list
+  # Currently only handles two AOIs
+  
+  AOIs <- list(L = list(X = L_X,
+                        Y = L_Y),
+               R = list(X = R_X,
+                        Y = R_Y)
+  )
+  return(AOIs)
+}
+
