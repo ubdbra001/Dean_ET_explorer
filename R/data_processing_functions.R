@@ -24,7 +24,9 @@ add_group <- function(data, groupFile_loc = "data/Groups.csv") {
   # Load and add group info to data
   
   group_info <- readr::read_csv(groupFile_loc, show_col_types = F)
-  data <- left_join(data, group_info, by = "part_ID")
+  group_recoded <- mutate(group_info,
+                          Group = recode(Group, M = "Monolingual", B = "Bilingual"))
+  data <- left_join(data, group_recoded, by = "part_ID")
 
 }
 
