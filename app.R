@@ -56,7 +56,7 @@ ui <- fluidPage(
                            unique(ET_data$trial_ID)),
                
                numericInput('samples_for_look', "Number of samples in a look",
-                            value = 12, min = 1))
+                            value = look_length_default, min = 1))
     )
 
 )
