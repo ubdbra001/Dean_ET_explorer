@@ -81,3 +81,30 @@ remove_oversampled <- function(data_in, sample_rate = 800) {
   data_out <- filter(data_in, !part_ID %in% oversampled$part_ID)
   return(data_out)
 }
+
+find_first_look <- function(data, run_length) {
+  
+  ## Finds the first time a run of Ts of a specified length appear in the
+  # data and returns the starting location.
+  
+  # Get lengths of all runs
+  runs <- rle(data)
+  
+  # Find location of all runs that meet the criteria
+  first_look_run <- which(runs$values == TRUE & runs$lengths >= run_length)
+  
+  # Compute where the runs stop
+  run_end_pos <- cumsum(runs$lengths)
+  # Compute where the runs start
+  run_start_pos <- c(1, run_end_pos[-length(run_end_pos)]+1)
+  
+  if (length(first_look_run) > 0) {
+    # Compute location of run start if run of length found
+    first_look_loc <- run_start_pos[first_look_run[1]]
+  } else {
+    # Otherwise return NA
+    first_look_loc <- NA_integer_
+  }
+  
+  return(first_look_loc)
+}
