@@ -66,3 +66,18 @@ default_AOIs <- function(){
                R = list(X = c(0.6, 1),
                         Y = c(0, 1)))
 }
+
+remove_oversampled <- function(data_in, sample_rate = 800) {
+  
+  # Find and remove participants with data that exceed a specified sample rate
+  
+  grouped_data <- group_by(data_in, part_ID)
+  
+  samples_per_participant <- summarise(grouped_data, N_samples = max(sample_ID),
+                              .groups = "keep")
+  
+  oversampled <- filter(samples_per_participant, N_samples > sample_rate)
+  
+  data_out <- filter(data_in, !part_ID %in% oversampled$part_ID)
+  return(data_out)
+}
