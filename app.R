@@ -8,6 +8,9 @@
 # You can run the application by clicking the 'Run App' button above.
 
 library(shiny)
+library(tidyverse)
+library(cowplot)
+library(plotly)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
