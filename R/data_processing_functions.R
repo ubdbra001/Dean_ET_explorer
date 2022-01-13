@@ -44,12 +44,6 @@ average_gaze_pos <- function(data){
 
 categorise_look <- function(data, AOI_info = NULL){
   
-  
-  # If no AOI info is provided then load defaults
-  if(is.null(AOI_info)) {
-    AOI_info <- default_AOIs()
-  }
-  
   AOI_names <- names(AOI_info)
   
   # For each AOI get the x & y values and gaze falls within them  
@@ -68,13 +62,6 @@ categorise_look <- function(data, AOI_info = NULL){
   return(data)
 }
 
-default_AOIs <- function(){
-  # Generate nested list with default AOIs
-  AOIs <- list(L = list(X = c(0, 0.4),
-                        Y = c(0, 1)),
-               R = list(X = c(0.6, 1),
-                        Y = c(0, 1)))
-}
 
 remove_oversampled <- function(data_in, sample_rate = 800) {
   

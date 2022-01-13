@@ -12,7 +12,31 @@ library(tidyverse)
 library(cowplot)
 library(plotly)
 
-# Define UI for application that draws a histogram
+# Load data
+ET_data <- load_data()
+
+# default AOI properties
+Left_x = c(0, 0.4)
+Left_y = c(0, 1)
+Right_x = c(0.6, 1)
+Right_y = c(0, 1)
+
+lower_limit = 0
+upper_limit = 1
+
+step_size = 0.01
+
+
+# Constants for plotting
+hjust = 1.1
+vjust = 1
+
+y_lims = c(0,1)
+
+sample_rate = 120
+
+
+# Define UI for application
 ui <- fluidPage(
 
     # Application title
@@ -32,21 +56,21 @@ ui <- fluidPage(
     fluidRow(
         column(5,
                sliderInput("L_AOI_X", "Left AOI X vals",
-                           min = 0, max = 1,
-                           value = c(0,0.4), step = 0.01),
+                           min = lower_limit, max = upper_limit,
+                           value = Left_x, step = step_size),
                
                sliderInput("L_AOI_Y", "Left AOI Y vals",
-                           min = 0, max = 1,
-                           value = c(0, 1), step = 0.01)
+                           min = lower_limit, max = upper_limit,
+                           value = Left_y, step = step_size)
                
         ),
         column(5,
                sliderInput("R_AOI_X", "Right AOI X vals",
-                           min = 0, max = 1,
-                           value = c(0.6,1), step = 0.01),
+                           min = lower_limit, max = upper_limit,
+                           value = Right_x, step = step_size),
                sliderInput("R_AOI_Y", "Right AOI Y vals",
-                           min = 0, max = 1,
-                           value = c(0, 1), step = 0.01)
+                           min = lower_limit, max = upper_limit,
+                           value = Right_y, step = step_size)
         ),
         column(2,
                selectInput('trial_choice', "Trial Number",
