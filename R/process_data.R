@@ -18,3 +18,17 @@ add_sample_n <- function(data){
   
   return(data_out)
 }
+
+average_gaze_pos <- function(data){
+  
+  # Averages gaze position across both eyes
+  # Will ignore NAs so if one eye is not found then it will return the position
+  # for only a single eye
+  
+  # May want to alter whether single eye is enough to be user specified?
+  data_out <- mutate(data,
+                     gaze_x = rowMeans(across(LX:RX), na.rm = T),
+                     gaze_y = rowMeans(across(LY:RY), na.rm = T))
+  
+  return(data_out)
+}
