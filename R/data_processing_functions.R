@@ -119,3 +119,13 @@ AOI_inputs_to_list <- function(L_X, L_Y, R_X, R_Y){
   return(AOIs)
 }
 
+initial_processing <- function(data_in) {
+  
+  # Performs the initial data processing steps
+  data_wGroups <- add_group(data_in)
+  data_wSampleNs <- add_sample_n(data_wGroups)
+  data_same_SR <- remove_oversampled(data_wSampleNs)
+  data_avgGaze <- average_gaze_pos(data_same_SR)
+  
+  return(data_avgGaze)
+} 
