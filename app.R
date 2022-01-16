@@ -71,8 +71,10 @@ server <- function(input, output) {
         AOIs_list <- AOI_inputs_to_list(input$L_AOI_X, input$L_AOI_Y,
                                         input$R_AOI_X, input$R_AOI_Y)
         
+        ET_filtered <- filter(ET_processed, trial_ID == input$trial_choice)
+        
         # Categorise whether sample is in L or R AOI
-        data_out <- categorise_look(ET_processed, AOIs_list)
+        data_out <- categorise_look(ET_filtered, AOIs_list)
         
     })
     
