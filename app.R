@@ -14,6 +14,7 @@ library(plotly)
 
 # Load data
 ET_data <- load_data()
+ET_processed <- initial_processing(ET_data)
 
 # Define UI for application
 ui <- fluidPage(
@@ -28,7 +29,8 @@ ui <- fluidPage(
                          checkboxInput("split_groups", "Split groups"),
                          plotlyOutput('looking_proportion_plot')),
                 tabPanel("First look Plot",
-                         plotOutput('firstLook_plot'))),
+                         plotOutput('firstLook_plot'))
+                ),
     
     hr(),
     
