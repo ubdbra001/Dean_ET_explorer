@@ -204,6 +204,41 @@ server <- function(input, output) {
             config(displayModeBar = F)
         
     })
+    
+    output[['firstLook_plot']] <- renderPlot({ 
+        
+        line_size = 0.8
+        
+        fl_plotdata <- ET_firstlooks()
+        
+        First_look_plot <- ggplot(data = fl_plotdata, aes(x = sample_time)) +
+            geom_line(aes(y = at_first_look, colour = Group), size = line_size) +
+            ylab("Proportion looking") +
+            ylim(y_lims) +
+            annotate("text", x=Inf, y = Inf, label = "First look AOI",
+                     vjust = vjust, hjust = hjust) +
+            theme_bw() +
+            theme(axis.title.x = element_blank(),
+                  axis.text.x = element_blank(),
+                  axis.ticks.x = element_blank(),
+                  legend.position = "right")
+        
+        
+        Looking_at_AOI_plot <- ggplot(data = fl_plotdata, aes(x = sample_time)) +
+            geom_line(aes(y = looking_at_AOI, colour = Group), size = line_size) +
+            ylab("Proportion looking") +
+            xlab("Time (s)") +
+            annotate("text", x=Inf, y = Inf, label = "Either AOI",
+                     vjust = vjust, hjust = hjust) +
+            ylim(y_lims) +
+            theme_bw() +
+            theme(legend.position = "none")
+        
+        plot_grid(First_look_plot, Looking_at_AOI_plot, ncol = 1,
+                  align = "v", axis = "lr")
+        
+    })
+    
 }
 
 # Run the application 
