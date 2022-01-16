@@ -156,6 +156,54 @@ server <- function(input, output) {
     })
     
     
+    # Render plot for Looking proportions
+    output[['looking_proportion_plot']] <- renderPlotly({
+        
+        ET_cat <- ET_categorised()
+        
+        # Group data differently depending on whether split data checkbox is ticked
+        if (input$split_groups) {
+            plot_data <- group_by(ET_cat, sample_ID, Group)
+        } else {
+            plot_data <- group_by(ET_cat, sample_ID)
+            
+        }
+        
+        # Do the steps to process the data
+        plot_data <- summarise(plot_data, AOI_L = mean(AOI_L), AOI_R = mean(AOI_R),
+                               .groups = "keep") %>%
+            arrange(sample_ID) %>%
+            mutate(sample_time = (sample_ID-1)/sample_rate) %>% # convert sample_ID
+            pivot_longer(cols = c("AOI_L", "AOI_R"), names_to = "AOI_location") %>%
+            mutate(AOI_location = recode(AOI_location,
+                                         AOI_L = "Left AOI",
+                                         AOI_R = "Right AOI"))
+        
+        
+        if (input$split_groups) {
+            plot_data <- unite(plot_data, Group_AOI, c("Group", "AOI_location"),
+                               remove = F, sep = ": ")
+            
+            base_plot <- ggplot(data = plot_data,
+                                aes(x = sample_time, colour = Group_AOI, y = value))
+            
+        } else {
+            base_plot <- ggplot(data = plot_data,
+                                aes(x = sample_time, y = value, colour = AOI_location))
+        }
+        
+        looking_plot <- base_plot +
+            # Plot traces for L and R AOIs
+            geom_line() +
+            ylim(y_lims) +
+            ylab("Proportion of Participants looking") +
+            xlab("Time(s)") +
+            theme_bw()
+        
+        ggplotly(looking_plot, tooltip = "y") %>%
+            config(displayModeBar = F)
+        
+    })
 }
 
 # Run the application 
