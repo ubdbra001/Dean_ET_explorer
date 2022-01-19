@@ -59,7 +59,21 @@ ui <- fluidPage(
                            unique(ET_data$trial_ID)),
                
                numericInput('samples_for_look', "Number of samples in a look",
-                            value = look_length_default, min = 1))
+                            value = look_length_default, min = 1)),
+        column(3,
+               checkboxInput('remove_outliers', "Remove outliers?"),
+               conditionalPanel(
+                   condition = "input.remove_outliers == true",
+                   selectInput('outlier_choice',
+                               "Criteria for removing outliers",
+                               c("Screen looking", "AOI looking")),
+               
+                   sliderInput('proportion_look',
+                               "Minimum proportion of looking per trial",
+                               min = lower_limit, max = upper_limit,
+                               value = 0.8, step = step_size)
+                   )),
+        
     )
 
 )
