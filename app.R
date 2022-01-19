@@ -2,12 +2,13 @@
 # This is a Shiny web application for exploring the ET data from the OSF repo:
 # https://osf.io/53gh2/
 
-# Helper functions for downloading the data and converting it from matthe mat
+# Helper functions for downloading the data and converting it from the mat
 # files are included, but not currently implemented in the app.
 
 # You can run the application by clicking the 'Run App' button above.
 
 library(shiny)
+library(shinyFiles)
 library(tidyverse)
 library(cowplot)
 library(plotly)
@@ -35,7 +36,7 @@ ui <- fluidPage(
     hr(),
     
     fluidRow(
-        column(5,
+        column(3,
                sliderInput("L_AOI_X", "Left AOI X vals",
                            min = lower_limit, max = upper_limit,
                            value = Left_x, step = step_size),
@@ -45,7 +46,7 @@ ui <- fluidPage(
                            value = Left_y, step = step_size)
                
         ),
-        column(5,
+        column(3,
                sliderInput("R_AOI_X", "Right AOI X vals",
                            min = lower_limit, max = upper_limit,
                            value = Right_x, step = step_size),
@@ -53,7 +54,7 @@ ui <- fluidPage(
                            min = lower_limit, max = upper_limit,
                            value = Right_y, step = step_size)
         ),
-        column(2,
+        column(3,
                selectInput('trial_choice', "Trial Number",
                            unique(ET_data$trial_ID)),
                
