@@ -95,6 +95,30 @@ server <- function(input, output) {
         
     })
     
+    ET_outliersRemoved <- reactive({
+        
+        # Removes participants and trials that do not meet the minimum looking
+        # criteria
+        ET_data <- ET_categorised()
+      
+        ET_looking <- group_by(ET_data, part_ID, trial_ID) %>%
+          summarise(screen_looking = mean(!(is.na(gaze_x)|is.na(gaze_y))),
+                    AOI_looking = mean(AOI_L | AOI_R),
+                    .groups = "drop")
+        
+        if (input$outlier_choice == "Screen looking"){
+          ET_looking <- filter(ET_looking,
+                               screen_looking > input$proportion_look)
+            
+        } else if (input$outlier_choice == "AOI looking") {
+          ET_looking <- filter(ET_looking,
+                               AOI_looking > input$proportion_look)
+        }
+        
+        ET_data <- semi_join(ET_data, ET_looking, by = c("part_ID", "trial_ID"))
+        
+    })
+    
     
     ET_firstlooks <- reactive({
         
