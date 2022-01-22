@@ -2,12 +2,13 @@
 # This is a Shiny web application for exploring the ET data from the OSF repo:
 # https://osf.io/53gh2/
 
-# Helper functions for downloading the data and converting it from matthe mat
+# Helper functions for downloading the data and converting it from the mat
 # files are included, but not currently implemented in the app.
 
 # You can run the application by clicking the 'Run App' button above.
 
 library(shiny)
+library(shinyFiles)
 library(tidyverse)
 library(cowplot)
 library(plotly)
@@ -35,7 +36,7 @@ ui <- fluidPage(
     hr(),
     
     fluidRow(
-        column(5,
+        column(3,
                sliderInput("L_AOI_X", "Left AOI X vals",
                            min = lower_limit, max = upper_limit,
                            value = Left_x, step = step_size),
@@ -45,7 +46,7 @@ ui <- fluidPage(
                            value = Left_y, step = step_size)
                
         ),
-        column(5,
+        column(3,
                sliderInput("R_AOI_X", "Right AOI X vals",
                            min = lower_limit, max = upper_limit,
                            value = Right_x, step = step_size),
@@ -53,12 +54,26 @@ ui <- fluidPage(
                            min = lower_limit, max = upper_limit,
                            value = Right_y, step = step_size)
         ),
-        column(2,
+        column(3,
                selectInput('trial_choice', "Trial Number",
                            unique(ET_data$trial_ID)),
                
                numericInput('samples_for_look', "Number of samples in a look",
-                            value = look_length_default, min = 1))
+                            value = look_length_default, min = 1)),
+        column(3,
+               checkboxInput('remove_outliers', "Remove outliers?"),
+               conditionalPanel(
+                   condition = "input.remove_outliers == true",
+                   selectInput('outlier_choice',
+                               "Criteria for removing outliers",
+                               c("Screen looking", "AOI looking")),
+               
+                   sliderInput('proportion_look',
+                               "Minimum proportion of looking per trial",
+                               min = lower_limit, max = upper_limit,
+                               value = 0.8, step = step_size)
+                   )),
+        
     )
 
 )
@@ -80,21 +95,47 @@ server <- function(input, output) {
         
     })
     
+    ET_outliersRemoved <- reactive({
+        
+        # Removes participants and trials that do not meet the minimum looking
+        # criteria
+        ET_data <- ET_categorised()
+      
+        ET_looking <- group_by(ET_data, part_ID, trial_ID) %>%
+          summarise(screen_looking = mean(!(is.na(gaze_x)|is.na(gaze_y))),
+                    AOI_looking = mean(AOI_L | AOI_R),
+                    .groups = "drop")
+        
+        if (input$outlier_choice == "Screen looking"){
+          ET_looking <- filter(ET_looking,
+                               screen_looking > input$proportion_look)
+            
+        } else if (input$outlier_choice == "AOI looking") {
+          ET_looking <- filter(ET_looking,
+                               AOI_looking > input$proportion_look)
+        }
+        
+        ET_data <- semi_join(ET_data, ET_looking, by = c("part_ID", "trial_ID"))
+        
+    })
+    
     
     ET_firstlooks <- reactive({
         
         # Updates the categorised ET dataframe with a per trial and per
         # participant first look, categorises whether each sample matches that,
         # and then summarises across participants
-        
-        ET_cat <- ET_categorised()
-        
-        ET_fl <- group_by(ET_cat, part_ID)
+        if (input$remove_outliers){
+          ET_cat <- ET_outliersRemoved()
+        } else {
+          ET_cat <- ET_categorised()
+        }
         
         # Calculate when the first look in a specific AOI occurs
         # (first look defined as first incidence of a run of samples categorised
         # as within an AOI for the user input specified amount, default is 12)
-        ET_fl <- summarise(ET_fl, .groups = "keep", 
+        ET_fl <- group_by(ET_cat, part_ID) %>%
+          summarise(.groups = "keep",
             first_L = find_first_look(AOI_L, input$samples_for_look),
             first_R = find_first_look(AOI_R, input$samples_for_look))
         
@@ -105,7 +146,7 @@ server <- function(input, output) {
                            ((first_L < first_R) | is.na(first_R)) ~ "L",
                            ((first_R < first_L) | is.na(first_L)) ~ "R"))
         
-        # Add the first look for each particiapnt and trial back to the samples
+        # Add the first look for each participant and trial back to the samples
         # for those trials
         ET_cat <- left_join(ET_cat, ET_fl, by = "part_ID")
         
@@ -161,8 +202,12 @@ server <- function(input, output) {
     # Render plot for Looking proportions
     output[['looking_proportion_plot']] <- renderPlotly({
         
-        ET_cat <- ET_categorised()
-        
+        if (input$remove_outliers){
+          ET_cat <- ET_outliersRemoved()
+        } else {
+          ET_cat <- ET_categorised()
+        }
+      
         # Group data differently depending on whether split data checkbox is ticked
         if (input$split_groups) {
             plot_data <- group_by(ET_cat, sample_ID, Group)
