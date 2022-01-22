@@ -109,7 +109,8 @@ server <- function(input, output) {
         # Calculate when the first look in a specific AOI occurs
         # (first look defined as first incidence of a run of samples categorised
         # as within an AOI for the user input specified amount, default is 12)
-        ET_fl <- summarise(ET_fl, .groups = "keep", 
+        ET_fl <- group_by(ET_cat, part_ID) %>%
+          summarise(.groups = "keep",
             first_L = find_first_look(AOI_L, input$samples_for_look),
             first_R = find_first_look(AOI_R, input$samples_for_look))
         
@@ -120,7 +121,7 @@ server <- function(input, output) {
                            ((first_L < first_R) | is.na(first_R)) ~ "L",
                            ((first_R < first_L) | is.na(first_L)) ~ "R"))
         
-        # Add the first look for each particiapnt and trial back to the samples
+        # Add the first look for each participant and trial back to the samples
         # for those trials
         ET_cat <- left_join(ET_cat, ET_fl, by = "part_ID")
         
