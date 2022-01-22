@@ -125,10 +125,11 @@ server <- function(input, output) {
         # Updates the categorised ET dataframe with a per trial and per
         # participant first look, categorises whether each sample matches that,
         # and then summarises across participants
-        
-        ET_cat <- ET_categorised()
-        
-        ET_fl <- group_by(ET_cat, part_ID)
+        if (input$remove_outliers){
+          ET_cat <- ET_outliersRemoved()
+        } else {
+          ET_cat <- ET_categorised()
+        }
         
         # Calculate when the first look in a specific AOI occurs
         # (first look defined as first incidence of a run of samples categorised
@@ -201,8 +202,12 @@ server <- function(input, output) {
     # Render plot for Looking proportions
     output[['looking_proportion_plot']] <- renderPlotly({
         
-        ET_cat <- ET_categorised()
-        
+        if (input$remove_outliers){
+          ET_cat <- ET_outliersRemoved()
+        } else {
+          ET_cat <- ET_categorised()
+        }
+      
         # Group data differently depending on whether split data checkbox is ticked
         if (input$split_groups) {
             plot_data <- group_by(ET_cat, sample_ID, Group)
