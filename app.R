@@ -30,7 +30,8 @@ ui <- fluidPage(
                          checkboxInput("split_groups", "Split groups"),
                          plotlyOutput('looking_proportion_plot')),
                 tabPanel("First look Plot",
-                         plotOutput('firstLook_plot'))
+                         plotOutput('firstLook_plot'),
+                         downloadButton('download_FLData', 'Download data'))
                 ),
     
     hr(),
@@ -284,7 +285,22 @@ server <- function(input, output) {
         plot_grid(First_look_plot, Looking_at_AOI_plot, ncol = 1,
                   align = "v", axis = "lr")
         
+        
     })
+    
+    # Add ability to download the first look data visualized on screen
+    output[["download_FLData"]] <- downloadHandler(
+      filename = function() {
+        paste("dataset-", Sys.Date(), ".csv", sep = "")
+      },
+      content = function(file) {
+        fl_data <- ET_firstlooks()
+        
+        write_csv(fl_data, file)
+      },
+      contentType = "text/csv"
+    )
+    
     
 }
 
