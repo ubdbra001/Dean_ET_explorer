@@ -23,6 +23,7 @@ ui <- fluidPage(
     # Application title
     titlePanel("Bilingual ET data explorer"),
     
+    # Define tabs for app
     tabsetPanel(type = "tabs",
                 tabPanel("AOI selections Plot",
                          plotOutput('AOI_selection_plot')),
@@ -36,7 +37,9 @@ ui <- fluidPage(
     
     hr(),
     
+    # Define bottom panel with inputs
     fluidRow(
+        # L AOI sliders
         column(3,
                sliderInput("L_AOI_X", "Left AOI X vals",
                            min = lower_limit, max = upper_limit,
@@ -47,6 +50,7 @@ ui <- fluidPage(
                            value = Left_y, step = step_size)
                
         ),
+        # R AOI sliders
         column(3,
                sliderInput("R_AOI_X", "Right AOI X vals",
                            min = lower_limit, max = upper_limit,
@@ -55,14 +59,18 @@ ui <- fluidPage(
                            min = lower_limit, max = upper_limit,
                            value = Right_y, step = step_size)
         ),
+        # Trial N and look samples selction
         column(3,
                selectInput('trial_choice', "Trial Number",
                            unique(ET_data$trial_ID)),
                
                numericInput('samples_for_look', "Number of samples in a look",
                             value = look_length_default, min = 1)),
+        # Outlier removal selection
         column(3,
                checkboxInput('remove_outliers', "Remove outliers?"),
+               
+               # Only show if remove_outliers box is checked
                conditionalPanel(
                    condition = "input.remove_outliers == true",
                    selectInput('outlier_choice',
