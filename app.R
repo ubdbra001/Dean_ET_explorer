@@ -142,22 +142,28 @@ server <- function(input, output) {
         
         # 
         ET_cat <- add_first_look(ET_cat, input$samples_for_look)
-        
-        # Summarise across participants to show how many participants were
-        # looking per sample
-        ET_cat <- group_by(ET_cat, sample_ID, Group)
-        
-        ET_cat <- summarise(ET_cat, .groups = "keep", 
-                            looking_at_AOI = mean(!is.na(at_first_look)),
-                            at_first_look = mean(at_first_look, na.rm = T))
-        
-        ET_cat <- arrange(ET_cat, sample_ID)
-        
-        # Converts IDs to sample times
-        # (Might be possible to avoid by rounding epoch_time)
-        ET_cat <- mutate(ET_cat, sample_time = (sample_ID-1)/sample_rate)
             
             
+    })
+    
+    ET_firstlooks_summ <- reactive({
+      
+      ET_fl_summ <- ET_firstlooks()
+      
+      # Summarise across participants to show how many participants were
+      # looking per sample
+      ET_fl_summ <- group_by(ET_fl_summ, sample_ID, Group)
+      
+      ET_fl_summ <- summarise(ET_fl_summ, .groups = "keep", 
+                          looking_at_AOI = mean(!is.na(at_first_look)),
+                          at_first_look = mean(at_first_look, na.rm = T))
+      
+      ET_fl_summ <- arrange(ET_fl_summ, sample_ID)
+      
+      # Converts IDs to sample times
+      # (Might be possible to avoid by rounding epoch_time)
+      ET_fl_summ <- mutate(ET_fl_summ, sample_time = (sample_ID-1)/sample_rate)
+      
     })
     
     
@@ -242,7 +248,7 @@ server <- function(input, output) {
         
         line_size = 0.8
         
-        fl_plotdata <- ET_firstlooks()
+        fl_plotdata <- ET_firstlooks_summ()
         
         First_look_plot <- ggplot(data = fl_plotdata, aes(x = sample_time)) +
             geom_line(aes(y = at_first_look, colour = Group), size = line_size) +
@@ -279,7 +285,7 @@ server <- function(input, output) {
         paste("dataset-", Sys.Date(), ".csv", sep = "")
       },
       content = function(file) {
-        fl_data <- ET_firstlooks()
+        fl_data <- ET_firstlooks_summ()
         
         write_csv(fl_data, file)
       },
