@@ -171,3 +171,23 @@ add_first_look <- function(data_in, samples_for_look = 12){
   return(data_cat)
   
 }
+
+add_bins <- function(data_in, bin_width_s = 0.2){
+  
+  # Splits the trials into user defined bins
+  binned_data <- mutate(data_in, bin_N = floor(epoch_time/bin_width_s) + 1)
+  return(binned_data)
+}
+
+summarise_binned_AOIs <- function(data_in) {
+  
+  # Summarise the 
+  grouped_data <- group_by(data_in, trial_ID, part_ID, bin_N)
+  summarised_data <- summarise(grouped_data,
+                               N_samples = n(),
+                               prop_AOI_L = mean(AOI_L),
+                               prop_AOI_R = mean(AOI_R),
+                               FL_AOI = first(FL),
+                               prop_FL = sum(at_first_look, na.rm = T)/N_samples,
+                               .groups = "drop")
+}
