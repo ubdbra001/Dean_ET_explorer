@@ -138,3 +138,36 @@ initial_processing <- function(data_in) {
   
   return(data_avgGaze)
 } 
+
+add_first_look <- function(data_in, samples_for_look = 12){
+  # Calculate when the first look in a specific AOI occurs
+  # (first look defined as first incidence of a run of samples categorised
+  # as within an AOI for the user input specified amount, default is 12)
+  data_fl <- group_by(data_in, part_ID) %>%
+    summarise(.groups = "keep",
+              first_L = find_first_look(AOI_L, samples_for_look),
+              first_R = find_first_look(AOI_R, samples_for_look))
+  
+  # Categorise which of these two first looks came first and thus which is
+  # the true first look
+  data_fl <- mutate(data_fl, 
+                  FL = case_when(is.na(first_L) & is.na(first_R) ~ NA_character_,
+                                 ((first_L < first_R) | is.na(first_R)) ~ "L",
+                                 ((first_R < first_L) | is.na(first_L)) ~ "R"))
+  
+  # Add the first look for each participant and trial back to the samples
+  # for those trials
+  data_cat <- left_join(data_in, data_fl, by = "part_ID")
+  
+  # Determine whether an individual sample matches the first look for that
+  # participant/trial
+  data_cat <- mutate(data_cat,
+                   at_first_look = case_when(FL == "L" ~ AOI_L,
+                                             FL == "R" ~ AOI_R,
+                                             is.na(FL) ~ NA),
+                   at_first_look = case_when(
+                     (AOI_L | AOI_R) == T ~ at_first_look))
+  
+  return(data_cat)
+  
+}
