@@ -46,6 +46,10 @@ average_gaze_pos <- function(data){
 
 categorise_look <- function(data, AOI_info = NULL){
   
+  if (is.null(AOI_info)) {
+    AOI_info <- AOI_inputs_to_list()
+  }
+    
   AOI_names <- names(AOI_info)
   
   # For each AOI get the x & y values and gaze falls within them  
@@ -108,7 +112,10 @@ find_first_look <- function(data, run_length) {
 }
 
 
-AOI_inputs_to_list <- function(L_X, L_Y, R_X, R_Y){
+AOI_inputs_to_list <- function(L_X = c(0, 0.4),
+                               L_Y = c(0, 1),
+                               R_X = c(0.6, 1),
+                               R_Y = c(0, 1)){
   
   # Take the individual AOI input vectors and convert them to a nested list
   # Currently only handles two AOIs
