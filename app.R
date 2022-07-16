@@ -90,18 +90,11 @@ ui <- fluidPage(
 # Define server logic
 server <- function(input, output) {
 
-    # Reactive function for processing the data
-    ET_categorised <- reactive({
-        
-        # Generate list of AOIs from the inputs
-        AOIs_list <- AOI_inputs_to_list(input$L_AOI_X, input$L_AOI_Y,
-                                        input$R_AOI_X, input$R_AOI_Y)
-        
-        ET_filtered <- filter(ET_processed, trial_ID == input$trial_choice)
-        
-        # Categorise whether sample is in L or R AOI
-        data_out <- categorise_look(ET_filtered, AOIs_list)
-        
+    ET_filtered <- reactive({
+      # Filter the data so only selected trial is processed
+      ET_filtered <- filter(ET_processed, trial_ID == input$trial_choice)
+      
+      return(ET_filtered)
     })
     
     ET_outliersRemoved <- reactive({
@@ -125,6 +118,17 @@ server <- function(input, output) {
         }
         
         ET_data <- semi_join(ET_data, ET_looking, by = c("part_ID", "trial_ID"))
+        
+    })
+    ET_categorised <- reactive({
+        
+        # Generate list of AOIs from the inputs
+        AOIs_list <- AOI_inputs_to_list(input$L_AOI_X, input$L_AOI_Y,
+                                        input$R_AOI_X, input$R_AOI_Y)
+        
+        
+        # Categorise whether sample is in L or R AOI
+        data_out <- categorise_look(ET_filtered, AOIs_list)
         
     })
     
