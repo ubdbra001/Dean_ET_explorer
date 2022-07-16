@@ -224,7 +224,7 @@ server <- function(input, output) {
         looking_plot <- ggplot(data = plot_data,
                                aes(x = sample_time,
                                    y = value,
-                                   colour = !!sym(col_option))) +
+                                   colour = !!sym(plot_colour_opt))) +
           geom_line() +
           ylim(y_lims) +
           ylab("Proportion of Participants looking") +
