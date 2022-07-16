@@ -98,28 +98,34 @@ server <- function(input, output) {
 
     ## Reactive functions
   
+  
     ET_filtered <- reactive({
       # Filter the data so only selected trial is processed
+      
       ET_filtered <- filter(ET_processed, trial_ID == input$trial_choice)
       
-      return(ET_filtered)
     })
   
-    ET_binned <- reactive({
-      # Add bins to the data
-      ET_data <- ET_filtered()
+    
+    ET_categorised <- reactive({
+      # Categorise each sample to indicate whether it falls into one of the AOIs
       
-      ET_binned <- add_bins(ET_data, bin_width = input$bin_width)
+      ET_filtered <- ET_filtered()
       
-      return(ET_binned)
+      # Generate list of AOIs from the inputs
+      AOIs_list <- AOI_inputs_to_list(input$L_AOI_X, input$L_AOI_Y,
+                                      input$R_AOI_X, input$R_AOI_Y)
+      
+      # Categorise whether sample is in L or R AOI
+      data_out <- categorise_look(ET_filtered, AOIs_list)
       
     })
-    
+
+
     ET_outliersRemoved <- reactive({
         
         # Removes participants and trials that do not meet the minimum looking
         # criteria
-      
       
         ET_data <- ET_categorised()
       
@@ -144,20 +150,8 @@ server <- function(input, output) {
         ET_data <- semi_join(ET_data, ET_looking, by = c("part_ID", "trial_ID"))
         
     })
-  
-    ET_categorised <- reactive({
-        
-        # Generate list of AOIs from the inputs
-        AOIs_list <- AOI_inputs_to_list(input$L_AOI_X, input$L_AOI_Y,
-                                        input$R_AOI_X, input$R_AOI_Y)
-        
-        
-        # Categorise whether sample is in L or R AOI
-        data_out <- categorise_look(ET_filtered, AOIs_list)
-        
-    })
-    
-    
+
+
     ET_firstlooks <- reactive({
         
         # Updates the categorised ET dataframe with a per trial and per
@@ -172,29 +166,16 @@ server <- function(input, output) {
         # 
         ET_cat <- add_first_look(ET_cat, input$samples_for_look)
             
-            
     })
     
-    ET_firstlooks_summ <- reactive({
+    
+    ET_binned <- reactive({
+      # Add bins to the data
+      ET_data <- ET_firstlooks()
       
-      ET_fl_summ <- ET_firstlooks()
-      
-      # Summarise across participants to show how many participants were
-      # looking per sample
-      ET_fl_summ <- group_by(ET_fl_summ, sample_ID, Group)
-      
-      ET_fl_summ <- summarise(ET_fl_summ, .groups = "keep", 
-                          looking_at_AOI = mean(!is.na(at_first_look)),
-                          at_first_look = mean(at_first_look, na.rm = T))
-      
-      ET_fl_summ <- arrange(ET_fl_summ, sample_ID)
-      
-      # Converts IDs to sample times
-      # (Might be possible to avoid by rounding epoch_time)
-      ET_fl_summ <- mutate(ET_fl_summ, sample_time = (sample_ID-1)/sample_rate)
+      ET_binned <- add_bins(ET_data, bin_width = input$bin_length)
       
     })
-    
     
     # Render plot for AOI selection
     output[['AOI_selection_plot']] <- renderPlot({
