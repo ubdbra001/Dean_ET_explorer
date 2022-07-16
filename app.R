@@ -222,33 +222,11 @@ server <- function(input, output) {
         } else {
           ET_cat <- ET_categorised()
         }
-      
-        # Group data differently depending on whether split data checkbox is ticked
-        if (input$split_groups) {
-            plot_data <- group_by(ET_cat, sample_ID, Group)
-        } else {
-            plot_data <- group_by(ET_cat, sample_ID)
-            
-        }
         
         # Do the steps to process the data
-        plot_data <- summarise(plot_data, AOI_L = mean(AOI_L), AOI_R = mean(AOI_R),
-                               .groups = "keep") %>%
-            arrange(sample_ID) %>%
-            mutate(sample_time = (sample_ID-1)/sample_rate) %>% # convert sample_ID
-            pivot_longer(cols = c("AOI_L", "AOI_R"), names_to = "AOI_location") %>%
-            mutate(AOI_location = recode(AOI_location,
-                                         AOI_L = "Left AOI",
-                                         AOI_R = "Right AOI"))
-        
+        plot_data <- summarise_looking(ET_cat, input$split_groups)
         
         if (input$split_groups) {
-            plot_data <- unite(plot_data, Group_AOI, c("Group", "AOI_location"),
-                               remove = F, sep = ": ")
-            
-            base_plot <- ggplot(data = plot_data,
-                                aes(x = sample_time, colour = Group_AOI, y = value))
-            
         } else {
             base_plot <- ggplot(data = plot_data,
                                 aes(x = sample_time, y = value, colour = AOI_location))

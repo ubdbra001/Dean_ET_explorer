@@ -49,3 +49,34 @@ calculate_AOIs <- function(LX, LY, RX, RY) {
   return(AOI_points)
 }
 
+summarise_looking <- function(data_in, split_groups) {
+  
+  # Group data differently depending on whether split data checkbox is ticked
+  data_grouped <- group_by(data_in, sample_ID)
+  if (split_groups) {
+    data_grouped <- group_by(data_grouped, Group, .add = TRUE)
+  }
+  
+  data_summary <- summarise(data_grouped, sample_time = first(sample_time),
+                         AOI_L = mean(AOI_L), AOI_R = mean(AOI_R),
+                         .groups = "keep")
+  
+  data_arranged <- arrange(data_summary, sample_ID)
+  
+  data_pivoted <- pivot_longer(data_arranged, cols = c("AOI_L", "AOI_R"),
+                               names_to = "AOI_location")
+  
+  data_recoded <- mutate(data_pivoted, 
+                         AOI_location = recode(AOI_location,
+                                               AOI_L = "Left AOI",
+                                               AOI_R = "Right AOI"))
+  
+  if (split_groups) {
+    # Unite group and AOI labels into a single label
+    data_recoded <- unite(data_recoded, Group_AOI, c("Group", "AOI_location"),
+                          remove = F, sep = ": ")
+  }
+  
+  return(data_recoded)
+  
+}
