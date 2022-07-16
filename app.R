@@ -61,13 +61,17 @@ ui <- fluidPage(
                            min = lower_limit, max = upper_limit,
                            value = Right_y, step = step_size)
         ),
-        # Trial N and look samples selction
+        # Trial N, look samples, and bin length selction
         column(3,
                selectInput('trial_choice', "Trial Number",
                            unique(ET_data$trial_ID)),
                
                numericInput('samples_for_look', "Number of samples in a look",
-                            value = look_length_default, min = 1)),
+                            value = look_length_default, min = 1),
+               
+               numericInput('bin_length', "Length of bin in Seconds",
+                            value = bin_length_default, min = 0.1, step = 0.1)
+               ),
         # Outlier removal selection
         column(3,
                checkboxInput('remove_outliers', "Remove outliers?"),
