@@ -1,4 +1,5 @@
 library(dplyr)
+source("R/user_defined_constants.R")
 
 load_data <- function(data_location = "data/processed_data/"){
   # Loads all csv files from a specific loaction and combines them into a
@@ -123,10 +124,10 @@ find_first_look <- function(data, run_length) {
 }
 
 
-AOI_inputs_to_list <- function(L_X = c(0, 0.4),
-                               L_Y = c(0, 1),
-                               R_X = c(0.6, 1),
-                               R_Y = c(0, 1)){
+AOI_inputs_to_list <- function(L_X = Left_x,
+                               L_Y = Left_y,
+                               R_X = Right_x,
+                               R_Y = Right_y){
   
   # Take the individual AOI input vectors and convert them to a nested list
   # Currently only handles two AOIs
