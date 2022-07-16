@@ -90,11 +90,23 @@ ui <- fluidPage(
 # Define server logic
 server <- function(input, output) {
 
+    ## Reactive functions
+  
     ET_filtered <- reactive({
       # Filter the data so only selected trial is processed
       ET_filtered <- filter(ET_processed, trial_ID == input$trial_choice)
       
       return(ET_filtered)
+    })
+  
+    ET_binned <- reactive({
+      # Add bins to the data
+      ET_data <- ET_filtered()
+      
+      ET_binned <- add_bins(ET_data, bin_width = input$bin_width)
+      
+      return(ET_binned)
+      
     })
     
     ET_outliersRemoved <- reactive({
