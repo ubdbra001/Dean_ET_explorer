@@ -21,3 +21,5 @@ sample_rate = 120
 
 # Default for look length
 look_length_default = 12
+
+bin_length_default = 0.5
