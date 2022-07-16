@@ -80,6 +80,25 @@ summarise_looking <- function(data_in, split_groups) {
   return(data_recoded)
   
 }
+
+
+summarise_first_looks <- function(data_in) {
+  
+  # Summarise across participants to show how many participants were
+  # looking per sample
+  data_grouped <- group_by(data_in, sample_ID, Group)
+  
+  data_summ <- summarise(data_grouped, .groups = "keep",
+                         sample_time = first(sample_time),
+                         looking_at_AOI = mean(!is.na(at_first_look)),
+                         at_first_look = mean(at_first_look, na.rm = T))
+  
+  data_arranged <- arrange(data_summ, sample_ID)
+  
+  return(data_arranged)
+}
+
+
 summarise_bins <- function(data_in, select_trial = NULL) {
   
   if (!is.null(select_trial)){
