@@ -1,3 +1,5 @@
+library(dplyr)
+
 calculate_points <- function(x_points, y_points, group = NA){
   
   # Convert individual points to a data frame that can be used to draw
@@ -48,6 +50,7 @@ calculate_AOIs <- function(LX, LY, RX, RY) {
   
   return(AOI_points)
 }
+
 
 summarise_looking <- function(data_in, split_groups) {
   
@@ -134,3 +137,4 @@ summarise_bins <- function(data_in, select_trial = NULL) {
   data_out <- filter(summarised_data, N_samples >= 24)
   
   return(data_out)
+}
