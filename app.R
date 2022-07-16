@@ -284,24 +284,25 @@ server <- function(input, output) {
       contentType = "text/csv"
     )
     
+    
     output[["binLook_plot"]] <- renderPlot({
       
+      ET_data <- ET_binned()
       
-      data_summ <- mutate(data_summ, bin_label = as.factor(bin_label))
+      ET_summ <- summarise_bins(ET_data)
       
-      data_summ$bin_label <- forcats::fct_reorder(data_summ$bin_label, data_summ$bin_N)
-      
-      ggplot(data_summ, aes(x = bin_label, y = prop_FL, group = Group, color = Group)) +
+      ggplot(ET_summ, aes(x = bin_label,
+                          y = prop_FL,
+                          group = Group,
+                          color = Group)) +
         geom_point(alpha = 0.4,
                    position = position_jitterdodge()) +
-        geom_vline(xintercept=seq(from = 1.5, to = 9.5, by = 1 ), color="black")+ 
+        #geom_vline(xintercept=seq(from = 1.5, to = 9.5, by = 1 ), color="black")+ 
         stat_summary(fun.data = "mean_cl_normal",
                      geom = "pointrange",
                      position = position_dodge(width = 0.5)) +
         theme_bw() +
-        theme(axis.text.x = element_text(angle = 45, hjust = 1),
-              panel.grid.major.x = element_blank(),
-              panel.grid.minor.x = element_line(colour = "black"))
+        theme(axis.text.x = element_text(angle = 45, hjust = 1))
       
     })
     
