@@ -207,8 +207,7 @@ sample_analysis <- function(){
   # Sample pipeline for analysing data
   data <- load_data()
   data <- initial_processing(data)
-  data <- add_screen_looking(data)
-  data <- add_bins(data)
+  data <- add_bins(data, bin_width_s = 0.5)
   data <- categorise_look(data)
   data <- add_first_look(data)
   
