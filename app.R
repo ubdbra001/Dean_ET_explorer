@@ -226,19 +226,23 @@ server <- function(input, output) {
         # Do the steps to process the data
         plot_data <- summarise_looking(ET_cat, input$split_groups)
         
+        # What should the colour grouping be based on 
         if (input$split_groups) {
+            plot_colour_opt <- "Group_AOI"    
         } else {
-            base_plot <- ggplot(data = plot_data,
-                                aes(x = sample_time, y = value, colour = AOI_location))
+            plot_colour_opt <- "AOI_location"
         }
         
-        looking_plot <- base_plot +
-            # Plot traces for L and R AOIs
-            geom_line() +
-            ylim(y_lims) +
-            ylab("Proportion of Participants looking") +
-            xlab("Time(s)") +
-            theme_bw()
+        # Generate plot
+        looking_plot <- ggplot(data = plot_data,
+                               aes(x = sample_time,
+                                   y = value,
+                                   colour = !!sym(col_option))) +
+          geom_line() +
+          ylim(y_lims) +
+          ylab("Proportion of Participants looking") +
+          xlab("Time(s)") +
+          theme_bw()
         
         ggplotly(looking_plot, tooltip = "y") %>%
             config(displayModeBar = F)
