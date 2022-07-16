@@ -240,9 +240,11 @@ server <- function(input, output) {
         
         line_size = 0.8
         
-        fl_plotdata <- ET_firstlooks_summ()
+        ET_fl <- ET_firstlooks()
         
-        First_look_plot <- ggplot(data = fl_plotdata, aes(x = sample_time)) +
+        plot_data <- summarise_first_looks(ET_fl)
+        
+        First_look_plot <- ggplot(data = plot_data, aes(x = sample_time)) +
             geom_line(aes(y = at_first_look, colour = Group), size = line_size) +
             ylab("Proportion looking") +
             ylim(y_lims) +
@@ -255,7 +257,7 @@ server <- function(input, output) {
                   legend.position = "right")
         
         
-        Looking_at_AOI_plot <- ggplot(data = fl_plotdata, aes(x = sample_time)) +
+        Looking_at_AOI_plot <- ggplot(data = plot_data, aes(x = sample_time)) +
             geom_line(aes(y = looking_at_AOI, colour = Group), size = line_size) +
             ylab("Proportion looking") +
             xlab("Time (s)") +
