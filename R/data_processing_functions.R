@@ -182,8 +182,12 @@ add_first_look <- function(data_in, samples_for_look = 12){
 add_bins <- function(data_in, bin_width_s = 0.2){
   
   # Splits the trials into user defined bins
-  binned_data <- mutate(data_in, bin_N = floor(epoch_time/bin_width_s) + 1)
-  return(binned_data)
+  data_out <- mutate(data_in,
+                     bin_N = floor(epoch_time/bin_width_s) + 1,
+                     # Generate labels for bins
+                     bin_label = paste0((bin_N - 1) * bin_width_s * 1000, "-",
+                                        (bin_N) * bin_width_s * 1000, "ms"))
+  return(data_out)
 }
 
 summarise_binned_AOIs <- function(data_in) {
@@ -192,6 +196,7 @@ summarise_binned_AOIs <- function(data_in) {
   grouped_data <- group_by(data_in, trial_ID, part_ID, Group, bin_N)
   summarised_data <- summarise(
     grouped_data,
+    bin_label = first(bin_label),
     N_samples = n(),
     FL_AOI = first(FL),
     # Get number of samples for screen looking, AOI looking, and FL looking
