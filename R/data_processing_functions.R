@@ -10,10 +10,14 @@ load_data <- function(data_location = "data/processed_data/"){
 
 add_sample_n <- function(data){
   # Adds sample_ID column that numbers each sample on a per participant and per
-  # trial basis
+  # trial  
   
   grouped_data <- group_by(data, trial_ID, part_ID)
-  data_WsampleN <- mutate(grouped_data, sample_ID = row_number())
+  data_WsampleN <- mutate(grouped_data,
+                          sample_ID = row_number(),
+                          sample_time = round(
+                            (sample_ID-1)/sample_rate,
+                            digits = 5))
   data_out <- ungroup(data_WsampleN)
   
   return(data_out)
