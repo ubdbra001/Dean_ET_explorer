@@ -147,8 +147,10 @@ initial_processing <- function(data_in) {
   data_wSampleNs <- add_sample_n(data_wGroups)
   data_same_SR <- remove_oversampled(data_wSampleNs)
   data_avgGaze <- average_gaze_pos(data_same_SR)
+  data_screen_look <- add_screen_looking(data_same_SR)
   
-  return(data_avgGaze)
+  
+  return(data_screen_look)
 } 
 
 add_first_look <- function(data_in, samples_for_look = 12){
