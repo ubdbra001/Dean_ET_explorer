@@ -188,13 +188,32 @@ add_bins <- function(data_in, bin_width_s = 0.2){
 
 summarise_binned_AOIs <- function(data_in) {
   
-  # Summarise the 
-  grouped_data <- group_by(data_in, trial_ID, part_ID, bin_N)
-  summarised_data <- summarise(grouped_data,
-                               N_samples = n(),
-                               prop_AOI_L = mean(AOI_L),
-                               prop_AOI_R = mean(AOI_R),
-                               FL_AOI = first(FL),
-                               prop_FL = sum(at_first_look, na.rm = T)/N_samples,
-                               .groups = "drop")
+  # Summarise the bins
+  grouped_data <- group_by(data_in, trial_ID, part_ID, Group, bin_N)
+  summarised_data <- summarise(
+    grouped_data,
+    N_samples = n(),
+    FL_AOI = first(FL),
+    # Get number of samples for screen looking, AOI looking, and FL looking
+    sum_screen_look = sum(screen_looking),
+    sum_AOI_look = sum(AOI_L | AOI_R),
+    sum_FL = sum(at_first_look, na.rm = T),
+    # Proportion of the bin spent looking at the screen
+    prop_screen_look = sum_screen_look/N_samples,
+    # Proportion of bin looking at the screen that was spent looking at AOIs
+    # Includes case_when to account for divide by 0
+    prop_AOI_look = case_when(
+      sum_screen_look > 0 ~ sum_AOI_look/sum_screen_look,
+      TRUE ~ 0.0),
+    # Proportion of bin looking at the AOIs that was spent looking atthe FL AOI
+    # Includes case_when to account for divide by 0
+    prop_FL = case_when(
+      sum_AOI_look > 0 ~ sum_FL/sum_AOI_look,
+      TRUE ~ 0.0),
+    .groups = "drop"
+    )
+  
+  data_out <- filter(summarised_data, N_samples >= 24)
+  
+  return(data_out)
 }
