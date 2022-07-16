@@ -222,3 +222,17 @@ summarise_binned_AOIs <- function(data_in) {
   
   return(data_out)
 }
+
+sample_analysis <- function(){
+  
+  # Sample pipeline for analysing data
+  data <- load_data()
+  data <- initial_processing(data)
+  data <- add_screen_looking(data)
+  data <- add_bins(data)
+  data <- categorise_look(data)
+  data <- add_first_look(data)
+  
+  return(data)
+}
+
