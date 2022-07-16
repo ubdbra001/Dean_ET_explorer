@@ -30,6 +30,13 @@ add_group <- function(data, groupFile_loc = "data/Groups.csv") {
 
 }
 
+add_screen_looking <- function(data_in) {
+  # Add variable that indicates if participant gaze falls on screen
+  data_out <- mutate(data_in, screen_looking = !(is.na(gaze_x) | is.na(gaze_y)))
+  
+  return(data_out)
+}
+
 average_gaze_pos <- function(data){
   
   # Averages gaze position across both eyes
