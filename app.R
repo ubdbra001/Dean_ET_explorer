@@ -113,13 +113,18 @@ server <- function(input, output) {
         
         # Removes participants and trials that do not meet the minimum looking
         # criteria
+      
+      
         ET_data <- ET_categorised()
       
+        # Calculate screen looking and AOI looking proportions on a per trial
+        # and participant basis
         ET_looking <- group_by(ET_data, part_ID, trial_ID) %>%
-          summarise(screen_looking = mean(!(is.na(gaze_x)|is.na(gaze_y))),
+          summarise(screen_looking = mean(screen_looking),
                     AOI_looking = mean(AOI_L | AOI_R),
                     .groups = "drop")
         
+        # Filter based on user inputs
         if (input$outlier_choice == "Screen looking"){
           ET_looking <- filter(ET_looking,
                                screen_looking > input$proportion_look)
@@ -129,9 +134,11 @@ server <- function(input, output) {
                                AOI_looking > input$proportion_look)
         }
         
+        # Semi_join keeps participants and trials that weren't filtered 
         ET_data <- semi_join(ET_data, ET_looking, by = c("part_ID", "trial_ID"))
         
     })
+  
     ET_categorised <- reactive({
         
         # Generate list of AOIs from the inputs
