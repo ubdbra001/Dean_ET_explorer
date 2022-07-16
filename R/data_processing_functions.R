@@ -190,7 +190,11 @@ add_bins <- function(data_in, bin_width_s = 0.2){
   return(data_out)
 }
 
-summarise_binned_AOIs <- function(data_in) {
+summarise_bins <- function(data_in, select_trial = NULL) {
+  
+  if (!is.null(select_trial)){
+    data_in <- filter(data_in, trial_ID == select_trial)
+  }
   
   # Summarise the bins
   grouped_data <- group_by(data_in, trial_ID, part_ID, Group, bin_N)
