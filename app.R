@@ -32,7 +32,9 @@ ui <- fluidPage(
                          plotlyOutput('looking_proportion_plot')),
                 tabPanel("First look Plot",
                          plotOutput('firstLook_plot'),
-                         downloadButton('download_FLData', 'Download data'))
+                         downloadButton('download_FLData', 'Download data')),
+                tabPanel("Binned look Plot",
+                         plotOutput('binLook_plot'))
                 ),
     
     hr(),
