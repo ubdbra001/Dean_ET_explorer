@@ -246,7 +246,7 @@ server <- function(input, output) {
         
         First_look_plot <- ggplot(data = plot_data, aes(x = sample_time)) +
             geom_line(aes(y = at_first_look, colour = Group), size = line_size) +
-            ylab("Proportion looking") +
+            ylab("Proportion participants looking") +
             ylim(y_lims) +
             annotate("text", x=Inf, y = Inf, label = "First look AOI",
                      vjust = vjust, hjust = hjust) +
@@ -259,7 +259,7 @@ server <- function(input, output) {
         
         Looking_at_AOI_plot <- ggplot(data = plot_data, aes(x = sample_time)) +
             geom_line(aes(y = looking_at_AOI, colour = Group), size = line_size) +
-            ylab("Proportion looking") +
+            ylab("Proportion participants looking") +
             xlab("Time (s)") +
             annotate("text", x=Inf, y = Inf, label = "Either AOI",
                      vjust = vjust, hjust = hjust) +
@@ -286,10 +286,11 @@ server <- function(input, output) {
                           color = Group)) +
         geom_point(alpha = 0.4,
                    position = position_jitterdodge()) +
-        #geom_vline(xintercept=seq(from = 1.5, to = 9.5, by = 1 ), color="black")+ 
         stat_summary(fun.data = "mean_cl_normal",
                      geom = "pointrange",
                      position = position_dodge(width = 0.5)) +
+        labs(y = "Proportion looking",
+             x = "Time bin") +
         theme_bw() +
         theme(axis.text.x = element_text(angle = 45, hjust = 1))
       
