@@ -31,10 +31,10 @@ ui <- fluidPage(
                          checkboxInput("split_groups", "Split groups"),
                          plotlyOutput('looking_proportion_plot')),
                 tabPanel("First look Plot",
-                         plotOutput('firstLook_plot'),
-                         downloadButton('download_FLData', 'Download data')),
+                         plotOutput('firstLook_plot')),
                 tabPanel("Binned look Plot",
-                         plotOutput('binLook_plot'))
+                         plotOutput('binLook_plot'),
+                         downloadButton('download_BinnedData', 'Download data')),
                 ),
     
     hr(),
@@ -273,19 +273,6 @@ server <- function(input, output) {
         
     })
     
-    # Add ability to download the first look data visualized on screen
-    output[["download_FLData"]] <- downloadHandler(
-      filename = function() {
-        paste("dataset-", Sys.Date(), ".csv", sep = "")
-      },
-      content = function(file) {
-        fl_data <- ET_firstlooks_summ()
-        
-        write_csv(fl_data, file)
-      },
-      contentType = "text/csv"
-    )
-    
     
     output[["binLook_plot"]] <- renderPlot({
       
@@ -308,6 +295,20 @@ server <- function(input, output) {
       
     })
     
+    # Add ability to download the first look data visualized on screen
+    output[["download_BinnedData"]] <- downloadHandler(
+      filename = function() {
+        paste("dataset-", Sys.Date(), ".csv", sep = "")
+      },
+      content = function(file) {
+        data_binned <- ET_binned()
+        
+        data_summ <- summarise_bins(data_binned)
+        
+        write_csv(data_summ, file)
+      },
+      contentType = "text/csv"
+    )
     
 }
 
