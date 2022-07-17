@@ -12,6 +12,7 @@ library(shinyFiles)
 library(tidyverse)
 library(cowplot)
 library(plotly)
+library(Hmisc)
 
 # Load data
 ET_data <- load_data()
